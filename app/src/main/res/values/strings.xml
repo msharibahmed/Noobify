@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Noobify</string>
+    <string name="home_btn">Home</string>
+    <string name="my_playlist_btn">My Playlists</string>
+    <string name="creator_name">Sharib Ahmed</string>
+    <string name="creator_username">\@msharibahmed</string>
+    <string name="creator_contact">Creator contact</string>
+    <string name="creator_avatar">Creator Avatar</string>
+    <string name="song_title">Song:</string>
+    <string name="song_name">Uptown Funk</string>
+    <string name="play_btn">Play Button</string>
+    <string name="playlist_added_text">Added to Playlist</string>
+    <string name="created_at">39 minutes ago</string>
 </resources>
