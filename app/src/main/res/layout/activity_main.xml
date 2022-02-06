@@ -12,46 +12,54 @@
 
     </androidx.recyclerview.widget.RecyclerView>
 
- <!--  <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="bottom"
-        android:orientation="vertical">
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:padding="10dp"
+        android:visibility="visible" />
+    <!--  <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:gravity="bottom"
+           android:orientation="vertical">
 
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/list_songs_playlist"
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_below="@+id/list_songs_playlist"
 
-            android:orientation="horizontal">
+               android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/btn_home"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:contentDescription="@string/home_btn"
-                android:drawableTop="@drawable/home_icon"
-                android:text="@string/home_btn"
-                android:textAllCaps="false"
-                android:textColor="@color/white" />
+               <Button
+                   android:id="@+id/btn_home"
+                   style="@style/Widget.AppCompat.Button.Borderless"
+                   android:layout_width="wrap_content"
+                   android:layout_height="match_parent"
+                   android:layout_weight="1"
+                   android:contentDescription="@string/home_btn"
+                   android:drawableTop="@drawable/home_icon"
+                   android:text="@string/home_btn"
+                   android:textAllCaps="false"
+                   android:textColor="@color/white" />
 
-            <Button
-                android:id="@+id/btn_my_playlist"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:contentDescription="@string/my_playlist_btn"
-                android:drawableTop="@drawable/my_playlist_icon"
-                android:text="@string/my_playlist_btn"
-                android:textAllCaps="false"
-                android:textColor="@color/white" />
+               <Button
+                   android:id="@+id/btn_my_playlist"
+                   style="@style/Widget.AppCompat.Button.Borderless"
+                   android:layout_width="wrap_content"
+                   android:layout_height="match_parent"
+                   android:layout_weight="1"
+                   android:contentDescription="@string/my_playlist_btn"
+                   android:drawableTop="@drawable/my_playlist_icon"
+                   android:text="@string/my_playlist_btn"
+                   android:textAllCaps="false"
+                   android:textColor="@color/white" />
 
-        </LinearLayout>
-    </LinearLayout> -->
+           </LinearLayout>
+       </LinearLayout> -->
 
 
 </RelativeLayout>
