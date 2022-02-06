@@ -10,7 +10,10 @@
         <entry key="..\:/Users/MSharib/Desktop/kotlin_test/app/src/main/res/drawable/ic_baseline_play_circle_filled_24.xml" value="0.1985" />
         <entry key="..\:/Users/MSharib/Desktop/kotlin_test/app/src/main/res/drawable/icons.xml" value="0.199" />
         <entry key="..\:/Users/MSharib/Desktop/kotlin_test/app/src/main/res/drawable/my_playlist_icon.xml" value="0.199" />
+        <entry key="..\:/Users/MSharib/Desktop/kotlin_test/app/src/main/res/drawable/next_icon.xml" value="0.1985" />
         <entry key="..\:/Users/MSharib/Desktop/kotlin_test/app/src/main/res/drawable/play_btn_icon.xml" value="0.1985" />
+        <entry key="..\:/Users/MSharib/Desktop/kotlin_test/app/src/main/res/drawable/prev_icon.xml" value="0.1985" />
+        <entry key="..\:/Users/MSharib/Desktop/kotlin_test/app/src/main/res/drawable/restart_icon.xml" value="0.1985" />
         <entry key="..\:/Users/MSharib/Desktop/kotlin_test/app/src/main/res/drawable/splash_screen.xml" value="0.22" />
         <entry key="..\:/Users/MSharib/Desktop/kotlin_test/app/src/main/res/layout/activity_main.xml" value="0.22" />
         <entry key="..\:/Users/MSharib/Desktop/kotlin_test/app/src/main/res/layout/playlist_item.xml" value="0.33" />
