@@ -11,6 +11,7 @@ import com.example.myapplication.models.PlaylistItemModel
 class PlaylistAdapter(private val context: Context) :
     RecyclerView.Adapter<PlaylistAdapter.PlaylistItemViewHolder>() {
     private var myList = ArrayList<PlaylistItemModel.Short>()
+
     inner class PlaylistItemViewHolder(binding: PlaylistItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         var name = binding.textCreatorName
@@ -40,10 +41,10 @@ class PlaylistAdapter(private val context: Context) :
         return myList.size
     }
 
-     @SuppressLint("NotifyDataSetChanged")
-     fun add(loadedData : PlaylistItemModel){
+    @SuppressLint("NotifyDataSetChanged")
+    fun add(loadedData: PlaylistItemModel) {
         myList.addAll(loadedData.shorts)
-         notifyDataSetChanged()
+        notifyDataSetChanged()
     }
 
 }

@@ -5,7 +5,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object ServiceBuilder {
-    private const val URL ="https://run.mocky.io/v3/b9f74279-038b-4590-9f96-7c720261294c/"
+    private const val URL = "https://run.mocky.io/v3/b9f74279-038b-4590-9f96-7c720261294c/"
 
     //CREATE HTTP CLIENT
     private val okHttp = OkHttpClient.Builder()
@@ -21,7 +21,7 @@ object ServiceBuilder {
     //we will use this class to create an anonymous inner class function that
     //implements Playlist service Interface
 
-    fun <T> buildService (serviceType :Class<T>):T{
+    fun <T> buildService(serviceType: Class<T>): T {
         return retrofit.create(serviceType)
     }
 
