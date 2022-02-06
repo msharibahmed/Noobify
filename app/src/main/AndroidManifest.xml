@@ -11,7 +11,7 @@
         android:theme="@style/splash_screen"
         android:allowBackup="true">
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.myapplication.activities.MainActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
