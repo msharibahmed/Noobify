@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="5dp"
+
+    tools:context=".activities.MiniPlayerFragment">
+<androidx.cardview.widget.CardView
+    android:layout_width="match_parent"
+    app:cardCornerRadius="10dp"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:id="@+id/card_bottom_player"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/teal_200"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@+id/mini_player_song_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="5dp"
+            android:layout_toStartOf="@id/mini_player_play_btn"
+            android:maxLines="1"
+            android:text="@string/song_name"
+            android:textColor="@color/noobify_icon_background"
+            android:textStyle="bold"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/mini_player_creator_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/mini_player_song_name"
+            android:layout_toStartOf="@id/mini_player_play_btn"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="0dp"
+            android:maxLines="1"
+            android:text="@string/creator_name"
+            android:textColor="@color/grey"
+            android:textSize="12sp" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:id="@+id/mini_player_play_btn"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:layout_toStartOf="@id/mini_player_next_btn"
+            android:src="@drawable/play_btn_icon"
+            app:fabSize="mini" />
+
+
+        <ImageButton
+            android:id="@+id/mini_player_next_btn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="20dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:src="@drawable/next_icon"/>
+
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>
+
+</FrameLayout>

@@ -102,6 +102,7 @@ class MainActivity : AppCompatActivity() {
 
                     //adding data to the list using add() method in PlaylistAdapter class
                     playlistAdapter.add(playlistItemList)
+                    showMiniPlayer()
 
 
                 } else {
@@ -122,6 +123,10 @@ class MainActivity : AppCompatActivity() {
                     .show()
             }
         })
+    }
+    private fun showMiniPlayer() {
+
+            binding.miniPlayer.visibility = View.VISIBLE
     }
 
 }

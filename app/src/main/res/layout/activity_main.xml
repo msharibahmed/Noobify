@@ -16,8 +16,7 @@
         android:id="@+id/progressBar"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
         android:padding="10dp"
         android:visibility="visible" />
     <!--  <LinearLayout
@@ -60,6 +59,19 @@
 
            </LinearLayout>
        </LinearLayout> -->
+    <FrameLayout
+        android:id="@+id/mini_player"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_alignParentBottom="true">
+        <fragment
+            android:layout_width="match_parent"
+            android:name="com.example.myapplication.activities.MiniPlayerFragment"
+            tools:layout="@layout/fragment_mini_player"
+            android:layout_height="wrap_content">
+        </fragment>
 
+    </FrameLayout>
 
 </RelativeLayout>
