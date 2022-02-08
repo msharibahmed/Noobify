@@ -8,6 +8,7 @@
     android:paddingVertical="8dp"
 
     tools:context=".activities.MiniPlayerFragment">
+
 <androidx.cardview.widget.CardView
     android:layout_width="match_parent"
     app:cardCornerRadius="10dp"
