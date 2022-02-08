@@ -23,7 +23,9 @@ import com.example.myapplication.services.ServiceBuilder
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.io.IOException
+import java.io.*
+import java.net.URL
+import java.net.URLConnection
 
 
 class MainActivity : AppCompatActivity(), CustomItemClickListener {
@@ -259,9 +261,13 @@ class MainActivity : AppCompatActivity(), CustomItemClickListener {
     private fun songOnClickCallBack() {
         playPause = if (!playPause) {
             mainActivityBinding.miniPlayerPlayBtn.setImageResource(R.drawable.pause_btn_icon)
-            if (intialStage)
-                 Player()
-                .execute(currentSong)
+            if (intialStage) {
+                if (Player().status != AsyncTask.Status.FINISHED) {
+                    Player().cancel(true)
+                }
+                Player()
+                    .execute(currentSong)
+            }
             else {
                 if (!mediaPlayer!!.isPlaying) mediaPlayer!!.start()
             }
@@ -274,34 +280,62 @@ class MainActivity : AppCompatActivity(), CustomItemClickListener {
     }
 
     // preparing mediaPlayer will take sometime to buffer the content so prepare it inside the background thread and starting it on UI thread.
-    inner class Player() : AsyncTask<String?, Void?, Boolean>() {
+    inner class Player : AsyncTask<String?, Void?, Boolean>() {
         private val progress: ProgressDialog = ProgressDialog(this@MainActivity)
         override fun doInBackground(vararg params: String?): Boolean {
             var prepared: Boolean
+            var mediaFile : File
             try {
-                mediaPlayer!!.setDataSource(params[0])
+               // if(isCancelled){
+                    val cn: URLConnection = URL(params[0]).openConnection()
+                    val `is`: InputStream = cn.getInputStream()
+
+                    // create file to store audio
+                    mediaFile = File(cacheDir, "mediafile")
+                    val fos = FileOutputStream(mediaFile)
+                    val buf = ByteArray(16 * 1024)
+                    Log.i("FileOutputStream", "Download")
+
+
+                    // write to file until complete
+                    do {
+                        val numread: Int = `is`.read(buf)
+                        if (numread <= 0) break
+                        fos.write(buf, 0, numread)
+                    } while (true)
+                    fos.flush()
+                    fos.close()
+                    Log.i("FileOutputStream", "Saved")
                 mediaPlayer!!.setOnCompletionListener {
                     unintializeMediaPLayer()
                     playNextSongAutomatically()
 
                 }
-                mediaPlayer!!.prepare()
+                    val fis = FileInputStream(mediaFile)
+                    // set mediaplayer data source to file descriptor of input stream
+
+                    mediaPlayer!!.setDataSource(fis.fd)
+
+
+                    mediaPlayer!!.prepare()
+
+               // }
                 prepared = true
             } catch (e: IllegalArgumentException) {
-                playNextSongAutomatically()
+                //playNextSongAutomatically()
                 Log.d("IllegalArgument", "Caught Exception")
                 e.message?.let { Log.d("IllegalArgument", it) }
 
                 prepared = false
                 e.printStackTrace()
             } catch (e: SecurityException) {
-                playNextSongAutomatically()
+               // playNextSongAutomatically()
                 Log.d("Security", "Caught Exception")
 
                 prepared = false
                 e.printStackTrace()
             } catch (e: IllegalStateException) {
-                playNextSongAutomatically()
+              //  playNextSongAutomatically()
                 Log.d("IllegalState", "Caught Exception")
 
                 prepared = false
@@ -311,6 +345,9 @@ class MainActivity : AppCompatActivity(), CustomItemClickListener {
 
                 prepared = false
                 e.printStackTrace()
+            }
+            finally {
+                Runnable { this@MainActivity.runOnUiThread { playNextSongAutomatically() } }
             }
 
             return prepared
@@ -338,6 +375,7 @@ class MainActivity : AppCompatActivity(), CustomItemClickListener {
 
 
         }
+
 
     }
 
