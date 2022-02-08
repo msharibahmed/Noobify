@@ -20,8 +20,6 @@ class PlaylistAdapter(private val context: Context, private val listener: Custom
         RecyclerView.ViewHolder(binding.root), View.OnClickListener {
         var name = binding.textCreatorName
         var username = binding.textCreatorUsername
-        var contact = binding.btnCreatorContact
-        var avatar = binding.imgCreatorAvatar
         var createdAt = binding.textCreatedAt
         var songName = binding.textSongName
 
@@ -77,8 +75,8 @@ class PlaylistAdapter(private val context: Context, private val listener: Custom
 @SuppressLint("SimpleDateFormat")
 fun dateFormatter(dateStr: String): String {
     val inputFormat: SimpleDateFormat = SimpleDateFormat("yyyy-MMM-dd")
-    val date: Date? = inputFormat.parse(dateStr);
-    //Log.d("daaate","$niceDateStr")
+    val date: Date? = inputFormat.parse(dateStr)
+    //Log.d("date","$niceDateStr")
     return DateUtils.getRelativeTimeSpanString(
         date!!.time,
         Calendar.getInstance().timeInMillis,
