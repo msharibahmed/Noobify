@@ -1,177 +1,185 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     tools:context="com.example.myapplication.activities.MainActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/list_songs_playlist"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
-    </androidx.recyclerview.widget.RecyclerView>
+    <LinearLayout
+        android:id="@+id/myLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/list_songs_playlist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <!--==<FrameLayout
+            android:id="@+id/mini_player"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_alignParentBottom="true">
+            <fragment
+                android:layout_width="match_parent"
+                android:name="com.example.myapplication.activities.MiniPlayerFragment"
+                tools:layout="@layout/fragment_mini_player"
+                android:layout_height="wrap_content">
+            </fragment>
+
+        </FrameLayout>
+    -->
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/mini_player_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginBottom="10dp"
+            android:visibility="gone"
+            app:cardCornerRadius="10dp">
+
+            <RelativeLayout
+                android:id="@+id/card_bottom_player"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/teal_200"
+
+                android:paddingHorizontal="5dp"
+                android:paddingBottom="8dp">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="5dp"
+                    android:layout_toStartOf="@id/mini_player_prev_btn"
+
+                    android:orientation="horizontal">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginEnd="5dp"
+                        app:cardCornerRadius="25dp">
+
+                        <ImageView
+                            android:id="@+id/img_creator_avatar"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:contentDescription="@string/creator_avatar"
+                            android:src="@drawable/noobify_splash_screen_icon" />
+                    </androidx.cardview.widget.CardView>
+
+                    <LinearLayout
+                        android:id="@+id/songDetailLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="16dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/mini_player_song_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:maxLines="1"
+                            android:text="@string/song_name"
+
+                            android:textColor="@color/noobify_icon_background"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/mini_player_creator_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:maxLines="1"
+                            android:text="@string/creator_name"
+                            android:textColor="#5D4037"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/mini_player_prev_btn"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="10dp"
+                    android:layout_toStartOf="@id/playBtnParentLayout"
+                    android:src="@drawable/prev_icon"
+                    tools:ignore="SpeakableTextPresentCheck" />
+
+                <RelativeLayout
+                    android:id="@+id/playBtnParentLayout"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+
+                    android:layout_toStartOf="@id/mini_player_next_btn"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/mini_player_play_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="10dp"
+                        android:padding="10dp"
+                        android:src="@drawable/play_btn_icon"
+
+                        android:visibility="visible"
+                        tools:ignore="ImageContrastCheck" />
+
+                    <ProgressBar
+                        android:id="@+id/audioLoadingProgress"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:layout_marginEnd="15dp"
+                        android:indeterminateTint="@color/noobify_icon_background"
+                        android:padding="10dp"
+                        android:visibility="gone" />
+                </RelativeLayout>
+
+
+                <ImageButton
+                    android:id="@+id/mini_player_next_btn"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="30dp"
+                    android:src="@drawable/next_icon"
+                    tools:ignore="SpeakableTextPresentCheck" />
+
+
+            </RelativeLayout>
+
+
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:indeterminateTint="@color/teal_200"
         android:padding="10dp"
         android:visibility="visible" />
-    <!--  <LinearLayout
-           android:layout_width="match_parent"
-           android:layout_height="match_parent"
-           android:gravity="bottom"
-           android:orientation="vertical">
-
-
-           <LinearLayout
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:layout_below="@+id/list_songs_playlist"
-
-               android:orientation="horizontal">
-
-               <Button
-                   android:id="@+id/btn_home"
-                   style="@style/Widget.AppCompat.Button.Borderless"
-                   android:layout_width="wrap_content"
-                   android:layout_height="match_parent"
-                   android:layout_weight="1"
-                   android:contentDescription="@string/home_btn"
-                   android:drawableTop="@drawable/home_icon"
-                   android:text="@string/home_btn"
-                   android:textAllCaps="false"
-                   android:textColor="@color/white" />
-
-               <Button
-                   android:id="@+id/btn_my_playlist"
-                   style="@style/Widget.AppCompat.Button.Borderless"
-                   android:layout_width="wrap_content"
-                   android:layout_height="match_parent"
-                   android:layout_weight="1"
-                   android:contentDescription="@string/my_playlist_btn"
-                   android:drawableTop="@drawable/my_playlist_icon"
-                   android:text="@string/my_playlist_btn"
-                   android:textAllCaps="false"
-                   android:textColor="@color/white" />
-
-           </LinearLayout>
-       </LinearLayout> -->
-    <!--<FrameLayout
-        android:id="@+id/mini_player"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:layout_alignParentBottom="true">
-        <fragment
-            android:layout_width="match_parent"
-            android:name="com.example.myapplication.activities.MiniPlayerFragment"
-            tools:layout="@layout/fragment_mini_player"
-            android:layout_height="wrap_content">
-        </fragment>
-
-    </FrameLayout>
--->
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/mini_player_card"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="10dp"
-        android:visibility="gone"
-        app:cardCornerRadius="10dp">
-
-        <RelativeLayout
-            android:id="@+id/card_bottom_player"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/teal_200"
-            android:padding="5dp">
-
-            <TextView
-                android:id="@+id/mini_player_song_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="22dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="0dp"
-                android:layout_toStartOf="@id/mini_player_prev_btn"
-                android:maxLines="1"
-                android:text="@string/song_name"
-                android:textColor="@color/noobify_icon_background"
-                android:textSize="15sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/mini_player_creator_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/mini_player_song_name"
-                android:layout_marginStart="22dp"
-                android:layout_marginTop="0dp"
-                android:layout_toStartOf="@id/mini_player_prev_btn"
-                android:maxLines="1"
-                android:text="@string/creator_name"
-                android:textColor="#5D4037"
-                android:textSize="12sp" />
-
-            <ImageButton
-                android:id="@+id/mini_player_prev_btn"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="10dp"
-                android:layout_toStartOf="@id/mini_player_play_btn"
-                android:src="@drawable/prev_icon"
-                tools:ignore="SpeakableTextPresentCheck" />
-
-            <ImageView
-                android:id="@+id/mini_player_play_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:layout_toStartOf="@id/mini_player_next_btn"
-                android:src="@drawable/play_btn_icon"
-                app:fabSize="mini"
-                tools:ignore="ImageContrastCheck" />
-
-
-            <ImageButton
-                android:id="@+id/mini_player_next_btn"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="30dp"
-                android:src="@drawable/next_icon"
-                tools:ignore="SpeakableTextPresentCheck" />
-
-
-        </RelativeLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:orientation="horizontal">
-
-            <SeekBar
-                android:id="@+id/seek_bar"
-                android:layout_width="match_parent"
-                android:layout_height="5dp"
-                android:layout_gravity="bottom"
-
-                android:max="6">
-
-            </SeekBar>
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
 
 </RelativeLayout>
