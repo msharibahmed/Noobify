@@ -1,13 +1,13 @@
 package com.example.myapplication.activities
 
 import android.annotation.SuppressLint
-import android.app.ProgressDialog
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -31,6 +31,7 @@ import java.net.URLConnection
 class MainActivity : AppCompatActivity(), CustomItemClickListener {
     lateinit var mainActivityBinding: ActivityMainBinding
     private lateinit var layout: LinearLayoutManager
+    private lateinit var paginationLoadingProgressBar: ProgressBar
     private var playlistAdapter: PlaylistAdapter = PlaylistAdapter(this@MainActivity, this)
 
     var showMiniPlayerCheck: Boolean = false //using to not show miniPlayer during screen loading
@@ -38,28 +39,48 @@ class MainActivity : AppCompatActivity(), CustomItemClickListener {
 
     private var playPause = false //help to toggle between play and pause.
 
-    private var intialStage =
+    private var initialStage =
         true // remain false till media is not completed, inside OnCompletionListener make it true.
     var mediaPlayer: MediaPlayer? = null
     var currentSong: String? = null
     var isScrolling: Boolean = false
     var currentSongIndex: Int? = null
+   // private lateinit var mNotificationManagerCompat: NotificationManagerCompat
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initializeLayout()
+      //  mNotificationManagerCompat = NotificationManagerCompat.from(this)
         initializingMediaPlayer()
+        paginationLoadingProgressBar = mainActivityBinding.progressBar
         mainActivityBinding.miniPlayerPlayBtn.setOnClickListener(pausePlay)
         mainActivityBinding.miniPlayerNextBtn.setOnClickListener(nextPlay)
         mainActivityBinding.miniPlayerPrevBtn.setOnClickListener(prevPlay)
         setUpRecyclerView()
         loadPlaylistItems()
         setUpRecycleViewScrollListener()
-        mainActivityBinding.seekBar.max = 100
+
 
     }
 
+  /*  private fun sendNotification() {
+        val channel: Notification =
+            NotificationCompat.Builder(this, CreateNotification.CHANNEL_ID_1)
+                .setSmallIcon(R.drawable.noobify_splash_screen_icon)
+                .setContentTitle("My notification")
+                .setContentText("Much longer text that cannot fit one line...")
+                .addAction(R.drawable.prev_icon, "prev", null)
+                .addAction(R.drawable.pause_btn_icon, "pause", null)
+                .addAction(R.drawable.next_icon, "next", null)
+                .setStyle(
+                    androidx.media.app.NotificationCompat.MediaStyle()
+                        .setShowActionsInCompactView(1, 2)
+                ).build()
+        mNotificationManagerCompat.notify(1, channel)
+    }
+
+   */
 
     private fun initializeLayout() {
 
@@ -117,8 +138,7 @@ class MainActivity : AppCompatActivity(), CustomItemClickListener {
 
 
     private fun loadPlaylistItems() {
-        mainActivityBinding.progressBar.visibility =
-            View.VISIBLE //using this progress bar during api call
+        paginationLoadingProgressBar.visibility =  View.VISIBLE //using this progress bar during api call
 
         //initiate the service
         val destinationService = ServiceBuilder.buildService(PlaylistItemService::class.java)
@@ -131,8 +151,8 @@ class MainActivity : AppCompatActivity(), CustomItemClickListener {
                 call: Call<PlaylistItemModel>,
                 response: Response<PlaylistItemModel>
             ) {
-                if (mainActivityBinding.progressBar.isVisible) {
-                    mainActivityBinding.progressBar.visibility = View.GONE
+                if (paginationLoadingProgressBar.isVisible) {
+                    paginationLoadingProgressBar.visibility = View.GONE
                 }
                 // Log.d("Response", "onResponse: ${response.body()}")
                 if (response.isSuccessful) {
@@ -170,8 +190,8 @@ class MainActivity : AppCompatActivity(), CustomItemClickListener {
             }
 
             override fun onFailure(call: Call<PlaylistItemModel>, t: Throwable) {
-                if (mainActivityBinding.progressBar.isVisible) { //hiding progressbar if failed to call api
-                    mainActivityBinding.progressBar.visibility = View.GONE
+                if (paginationLoadingProgressBar.isVisible) { //hiding progressbar if failed to call api
+                    paginationLoadingProgressBar.visibility = View.GONE
                 }
 
                 Toast.makeText(this@MainActivity, "Something went wrong $t", Toast.LENGTH_SHORT)
@@ -188,12 +208,13 @@ class MainActivity : AppCompatActivity(), CustomItemClickListener {
 
     override fun onItemClickChangeMiniPlayer(
         playlistItemModel: PlaylistItemModel.Short,
-        index: Int
+        index: Int,
     ) {
         playSelectedSong(playlistItemModel, index)
 
     }
 
+    @SuppressLint("SetTextI18n")
     private fun playSelectedSong(playlistItemModel: PlaylistItemModel.Short, index: Int) {
         mainActivityBinding.apply {
             miniPlayerSongName.text = playlistItemModel.title
@@ -211,12 +232,12 @@ class MainActivity : AppCompatActivity(), CustomItemClickListener {
         currentSong = playlistItemModel.audioPath
         currentSongIndex = index
         Log.d("nextSongINDEX", "currentIndex->$currentSongIndex")
-        unintializeMediaPLayer()
+        uninitializeMediaPLayer()
         songOnClickCallBack()
     }
 
-    private fun unintializeMediaPLayer() {
-        intialStage = true
+    private fun uninitializeMediaPLayer() {
+        initialStage = true
         playPause = false
         mainActivityBinding.miniPlayerPlayBtn.setImageResource(R.drawable.play_btn_icon)
         mediaPlayer!!.stop()
@@ -243,13 +264,13 @@ class MainActivity : AppCompatActivity(), CustomItemClickListener {
 
     private val nextPlay: View.OnClickListener =
         View.OnClickListener {
-            unintializeMediaPLayer()
+            uninitializeMediaPLayer()
             playNextSongLogic()
         }
     private val prevPlay: View.OnClickListener =
         View.OnClickListener {
             if (currentSongIndex!! >= 0) {
-                unintializeMediaPLayer()
+                uninitializeMediaPLayer()
                 val prevSongIdx = (currentSongIndex?.minus(1))?.rem(playlistAdapter.itemCount)
                 Log.d("prevINDEX", "currentIndex->$currentSongIndex, prevIndex->$prevSongIdx")
                 val playlistItem: PlaylistItemModel.Short =
@@ -261,14 +282,10 @@ class MainActivity : AppCompatActivity(), CustomItemClickListener {
     private fun songOnClickCallBack() {
         playPause = if (!playPause) {
             mainActivityBinding.miniPlayerPlayBtn.setImageResource(R.drawable.pause_btn_icon)
-            if (intialStage) {
-                if (Player().status != AsyncTask.Status.FINISHED) {
-                    Player().cancel(true)
-                }
+            if (initialStage) {
                 Player()
                     .execute(currentSong)
-            }
-            else {
+            } else {
                 if (!mediaPlayer!!.isPlaying) mediaPlayer!!.start()
             }
             true
@@ -281,45 +298,39 @@ class MainActivity : AppCompatActivity(), CustomItemClickListener {
 
     // preparing mediaPlayer will take sometime to buffer the content so prepare it inside the background thread and starting it on UI thread.
     inner class Player : AsyncTask<String?, Void?, Boolean>() {
-        private val progress: ProgressDialog = ProgressDialog(this@MainActivity)
         override fun doInBackground(vararg params: String?): Boolean {
             var prepared: Boolean
-            var mediaFile : File
+            var mediaFile: File
             try {
-               // if(isCancelled){
-                    val cn: URLConnection = URL(params[0]).openConnection()
-                    val `is`: InputStream = cn.getInputStream()
+                val cn: URLConnection = URL(params[0]).openConnection()
+                val `is`: InputStream = cn.getInputStream()
 
-                    // create file to store audio
-                    mediaFile = File(cacheDir, "mediafile")
-                    val fos = FileOutputStream(mediaFile)
-                    val buf = ByteArray(16 * 1024)
-                    Log.i("FileOutputStream", "Download")
+                // create file to store audio
+                mediaFile = File(cacheDir, "mediafile")
+                val fos = FileOutputStream(mediaFile)
+                val buf = ByteArray(16 * 1024)
+                Log.i("FileOutputStream", "Download")
 
+                // write to file until complete
+                do {
+                    val numread: Int = `is`.read(buf)
+                    if (numread <= 0) break
+                    fos.write(buf, 0, numread)
+                } while (true)
+                fos.flush()
+                fos.close()
+                Log.i("FileOutputStream", "Saved")
 
-                    // write to file until complete
-                    do {
-                        val numread: Int = `is`.read(buf)
-                        if (numread <= 0) break
-                        fos.write(buf, 0, numread)
-                    } while (true)
-                    fos.flush()
-                    fos.close()
-                    Log.i("FileOutputStream", "Saved")
                 mediaPlayer!!.setOnCompletionListener {
-                    unintializeMediaPLayer()
+                    uninitializeMediaPLayer()
                     playNextSongAutomatically()
-
                 }
-                    val fis = FileInputStream(mediaFile)
-                    // set mediaplayer data source to file descriptor of input stream
+                val fis = FileInputStream(mediaFile)
 
-                    mediaPlayer!!.setDataSource(fis.fd)
+                // set mediaplayer data source to file descriptor of input stream
+                mediaPlayer!!.setDataSource(fis.fd)
+                mediaPlayer!!.prepare()
 
-
-                    mediaPlayer!!.prepare()
-
-               // }
                 prepared = true
             } catch (e: IllegalArgumentException) {
                 //playNextSongAutomatically()
@@ -329,13 +340,13 @@ class MainActivity : AppCompatActivity(), CustomItemClickListener {
                 prepared = false
                 e.printStackTrace()
             } catch (e: SecurityException) {
-               // playNextSongAutomatically()
+                // playNextSongAutomatically()
                 Log.d("Security", "Caught Exception")
 
                 prepared = false
                 e.printStackTrace()
             } catch (e: IllegalStateException) {
-              //  playNextSongAutomatically()
+                //  playNextSongAutomatically()
                 Log.d("IllegalState", "Caught Exception")
 
                 prepared = false
@@ -345,8 +356,7 @@ class MainActivity : AppCompatActivity(), CustomItemClickListener {
 
                 prepared = false
                 e.printStackTrace()
-            }
-            finally {
+            } finally {
                 Runnable { this@MainActivity.runOnUiThread { playNextSongAutomatically() } }
             }
 
@@ -355,23 +365,27 @@ class MainActivity : AppCompatActivity(), CustomItemClickListener {
 
         override fun onPostExecute(result: Boolean) {
             super.onPostExecute(result)
-           if (progress.isShowing) {
-                progress.cancel()
-            }
+            /* if (progress.isShowing) {
+                 progress.cancel()
+             }*/
+            mainActivityBinding.audioLoadingProgress
+                .visibility = View.GONE
 
-
+            mainActivityBinding.miniPlayerPlayBtn.visibility = View.VISIBLE
             Log.d("Prepared", "//$result")
             if (!result) {
                 showCustomToast("media error, try next song")
             }
             mediaPlayer?.start()
-            intialStage = false
+            initialStage = false
         }
 
         override fun onPreExecute() {
             super.onPreExecute()
-            progress.setMessage("Buffering...")
-            progress.show()
+            /*  progress.setMessage("Buffering...")
+              progress.show()*/
+            mainActivityBinding.miniPlayerPlayBtn.visibility = View.GONE
+            mainActivityBinding.audioLoadingProgress.visibility = View.VISIBLE
 
 
         }
@@ -383,8 +397,6 @@ class MainActivity : AppCompatActivity(), CustomItemClickListener {
         Toast.makeText(this@MainActivity, "Something went wrong $message", duration)
             .show()
     }
-
-
 
 
 }
