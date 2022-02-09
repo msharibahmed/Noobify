@@ -20,6 +20,7 @@ import com.example.myapplication.helpers.PlaylistAdapter
 import com.example.myapplication.models.PlaylistItemModel
 import com.example.myapplication.services.PlaylistItemService
 import com.example.myapplication.services.ServiceBuilder
+import dagger.hilt.android.AndroidEntryPoint
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -27,7 +28,7 @@ import java.io.*
 import java.net.URL
 import java.net.URLConnection
 
-
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity(), CustomItemClickListener {
     lateinit var mainActivityBinding: ActivityMainBinding
     private lateinit var layout: LinearLayoutManager
@@ -134,7 +135,7 @@ class MainActivity : AppCompatActivity(), CustomItemClickListener {
                 if (paginationLoadingProgressBar.isVisible) {
                     paginationLoadingProgressBar.visibility = View.GONE
                 }
-                // Log.d("Response", "onResponse: ${response.body()}")
+                Log.d("Response", "onResponse: ${response.body()}")
                 if (response.isSuccessful) {
                     val playlistItemList = response.body()!!
                     // Log.d("Response", "playlist size : ${playlistItemList.shorts.size}")
