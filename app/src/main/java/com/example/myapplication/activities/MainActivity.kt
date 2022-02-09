@@ -45,13 +45,10 @@ class MainActivity : AppCompatActivity(), CustomItemClickListener {
     var currentSong: String? = null
     var isScrolling: Boolean = false
     var currentSongIndex: Int? = null
-   // private lateinit var mNotificationManagerCompat: NotificationManagerCompat
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initializeLayout()
-      //  mNotificationManagerCompat = NotificationManagerCompat.from(this)
         initializingMediaPlayer()
         paginationLoadingProgressBar = mainActivityBinding.progressBar
         mainActivityBinding.miniPlayerPlayBtn.setOnClickListener(pausePlay)
@@ -64,23 +61,6 @@ class MainActivity : AppCompatActivity(), CustomItemClickListener {
 
     }
 
-  /*  private fun sendNotification() {
-        val channel: Notification =
-            NotificationCompat.Builder(this, CreateNotification.CHANNEL_ID_1)
-                .setSmallIcon(R.drawable.noobify_splash_screen_icon)
-                .setContentTitle("My notification")
-                .setContentText("Much longer text that cannot fit one line...")
-                .addAction(R.drawable.prev_icon, "prev", null)
-                .addAction(R.drawable.pause_btn_icon, "pause", null)
-                .addAction(R.drawable.next_icon, "next", null)
-                .setStyle(
-                    androidx.media.app.NotificationCompat.MediaStyle()
-                        .setShowActionsInCompactView(1, 2)
-                ).build()
-        mNotificationManagerCompat.notify(1, channel)
-    }
-
-   */
 
     private fun initializeLayout() {
 
