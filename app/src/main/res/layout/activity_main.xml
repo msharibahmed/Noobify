@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
             android:layout_marginBottom="10dp"
-            android:visibility="visible"
+            android:visibility="gone"
             app:cardCornerRadius="10dp">
             <RelativeLayout
                 android:id="@+id/card_bottom_player"
