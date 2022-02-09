@@ -1,7 +1,6 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
-    id 'kotlin-kapt'
 }
 
 android {
@@ -34,8 +33,6 @@ android {
     buildFeatures {
         viewBinding true
     }
-    buildToolsVersion '31.0.0'
-    ndkVersion '23.1.7779620'
 }
 
 dependencies {
@@ -49,24 +46,6 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     //retrofit requisites retro+gson
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-
-    //Share media contents and controls with other apps
-    implementation 'androidx.media:media:1.4.3' //TODO:Remove this later(NOT GONNA USE THIS MEDIA SUPPORT)
-
-    //Dagger - Hilt
-    implementation 'com.google.dagger:hilt-android:2.40.5'
-    kapt 'com.google.dagger:hilt-android-compiler:2.40.5'
-    implementation "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03"
-    kapt "androidx.hilt:hilt-compiler:1.0.0"
-
-    // ExoPlayer
-    api "com.google.android.exoplayer:exoplayer-core:2.16.1"
-    api "com.google.android.exoplayer:exoplayer-ui:2.16.1"
-    api "com.google.android.exoplayer:extension-mediasession:2.16.1"
-
-    //Annotations
-    implementation 'androidx.annotation:annotation:1.3.0'
-
+    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
 }
