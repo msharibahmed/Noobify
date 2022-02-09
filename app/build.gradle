@@ -55,7 +55,7 @@ dependencies {
     //Share media contents and controls with other apps
     implementation 'androidx.media:media:1.4.3' //TODO:Remove this later(NOT GONNA USE THIS MEDIA SUPPORT)
 
-    //Dagger - Hilt
+    //Dagger - Hilt(dependency injection)
     implementation 'com.google.dagger:hilt-android:2.40.5'
     kapt 'com.google.dagger:hilt-android-compiler:2.40.5'
     implementation "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03"
