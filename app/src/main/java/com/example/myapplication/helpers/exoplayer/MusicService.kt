@@ -1,10 +1,11 @@
-package com.example.myapplication.helpers
+package com.example.myapplication.helpers.exoplayer
 
 import android.app.PendingIntent
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.session.MediaSessionCompat
 import androidx.media.MediaBrowserServiceCompat
+import com.example.myapplication.helpers.exoplayer.callbacks.MusicPlayerNotificationListener
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
@@ -27,28 +28,24 @@ class MusicService :
     @Inject
     lateinit var exoPlayer: ExoPlayer
 
+    private lateinit var musicNotificationManager: MusicNotificationManager
+
     /*handles coroutines task scope and lifetime i.e remains only
     *in our service scope and dies after our service dies*/
     private val serviceJob = Job()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
 
-    private lateinit var mediaSession:MediaSessionCompat //Allows interaction with media controllers
+    private lateinit var mediaSession: MediaSessionCompat //Allows interaction with media controllers
     private lateinit var mediaSessionConnector: MediaSessionConnector //connects mediaSessionCompat to Exoplayer
 
-    override fun onGetRoot(
-        clientPackageName: String,
-        clientUid: Int,
-        rootHints: Bundle?
-    ): BrowserRoot? {
-        TODO("Not yet implemented")
-    }
+    var isForegroundService = false
 
     override fun onCreate() {
         super.onCreate()
 
         //our activity will open when our mediaPlayer in the notification get clicked
         val activity = packageManager?.getLaunchIntentForPackage(packageName).let {
-            PendingIntent.getActivity(this,0,it,0)
+            PendingIntent.getActivity(this, 0, it, 0)
         }
 
         mediaSession = MediaSessionCompat(this, SERVICE_TAG).apply {
@@ -56,7 +53,15 @@ class MusicService :
             isActive = true //Sets if this session is currently active
         }
 
-        sessionToken = mediaSession.sessionToken //sets currentmedia player sessionToken
+        sessionToken = mediaSession.sessionToken //sets currentMedia player sessionToken
+
+        musicNotificationManager = MusicNotificationManager(
+            this,
+            mediaSession.sessionToken,
+            MusicPlayerNotificationListener(this)
+        ) {
+
+        }
 
         mediaSessionConnector = MediaSessionConnector(mediaSession)
         mediaSessionConnector.setPlayer(exoPlayer)
@@ -67,6 +72,14 @@ class MusicService :
     override fun onDestroy() {
         super.onDestroy()
         serviceScope.cancel() //making sure all coroutines launched in the serviceScope cancels
+    }
+
+    override fun onGetRoot(
+        clientPackageName: String,
+        clientUid: Int,
+        rootHints: Bundle?
+    ): BrowserRoot? {
+        TODO("Not yet implemented")
     }
 
     override fun onLoadChildren(

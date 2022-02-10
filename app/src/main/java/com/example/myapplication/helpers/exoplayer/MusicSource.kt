@@ -1,4 +1,4 @@
-package com.example.myapplication.helpers
+package com.example.myapplication.helpers.exoplayer
 
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaBrowserCompat.MediaItem.FLAG_PLAYABLE
