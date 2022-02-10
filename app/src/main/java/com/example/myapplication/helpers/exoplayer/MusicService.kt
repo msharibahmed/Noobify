@@ -161,6 +161,7 @@ class MusicService :
                             preparePlayer(musicSource.songs, musicSource.songs[0], false)
                             isPlayerInitialized = true
                         } else {
+                            mediaSession.sendSessionEvent(NETWORK_ERROR, null)
                             result.sendResult(null)
                         }
 
