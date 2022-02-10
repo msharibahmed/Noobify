@@ -6,9 +6,9 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class SongDb {
+class MusicDatabase {
 
-    private fun getAllSongs(): List<PlaylistItemModel.Short> {
+    fun getAllSongs(): List<PlaylistItemModel.Short> {
         var playlistItemList: List<PlaylistItemModel.Short> = emptyList()
         //initiate the service
         val destinationService = ServiceBuilder.buildService(PlaylistItemService::class.java)

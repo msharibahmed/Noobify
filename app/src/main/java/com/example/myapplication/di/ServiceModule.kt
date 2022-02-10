@@ -1,6 +1,7 @@
 package com.example.myapplication.di
 
 import android.content.Context
+import com.example.myapplication.services.MusicDatabase
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.audio.AudioAttributes
@@ -16,6 +17,10 @@ import dagger.hilt.android.scopes.ServiceScoped
 @Module
 @InstallIn(ServiceComponent::class) //restricting ServiceModule lifetime to service lifetime
 object ServiceModule {
+
+    @ServiceScoped
+    @Provides
+    fun provideMusicDatabase() = MusicDatabase()
 
     @ServiceScoped //restricting fun lifetime to ServiceModule lifetime
     @Provides
