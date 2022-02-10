@@ -21,7 +21,7 @@ import kotlinx.coroutines.*
 import javax.inject.Inject
 
 private const val SERVICE_TAG = "MusicService"
-private const val MEDIA_ROOT_ID = "root_id"
+const val MEDIA_ROOT_ID = "root_id"
 
 
 @AndroidEntryPoint

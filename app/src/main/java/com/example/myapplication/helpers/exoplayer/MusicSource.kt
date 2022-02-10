@@ -30,6 +30,7 @@ class MusicSource @Inject constructor(
                 .putString(METADATA_KEY_ARTIST, "Anonymous" + song.creator.userID)
                 .putString(METADATA_KEY_MEDIA_ID, song.shortID)
                 .putString(METADATA_KEY_TITLE, song.title)
+                .putString(METADATA_KEY_DISPLAY_SUBTITLE,song.title)
                 .putString(METADATA_KEY_DISPLAY_TITLE, song.title)
                 .putString(METADATA_KEY_MEDIA_URI, song.audioPath)
                 .build()
