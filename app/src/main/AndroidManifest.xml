@@ -16,6 +16,14 @@
         android:roundIcon="@mipmap/noobify_icon_round"
         android:supportsRtl="true"
         android:theme="@style/splash_screen">
+
+        <receiver
+            android:name="androidx.media.session.MediaButtonReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
         <service
             android:name=".helpers.exoplayer.MusicService"
             android:exported="false">

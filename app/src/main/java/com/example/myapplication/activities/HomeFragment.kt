@@ -1,6 +1,9 @@
 package com.example.myapplication.activities
 
 import android.os.Bundle
+import android.os.Handler
+import android.support.v4.media.MediaMetadataCompat
+import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,31 +16,36 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.databinding.FragmentHomeBinding
 import com.example.myapplication.helpers.Constants.TAG
+import com.example.myapplication.helpers.CustomOnclickListener
 import com.example.myapplication.helpers.SongAdapter
 import com.example.myapplication.helpers.Status
+import com.example.myapplication.helpers.exoplayer.isPlaying
+import com.example.myapplication.models.Song
 import com.example.myapplication.ui.viewmodel.MainViewModel
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(R.layout.fragment_home) {
+class HomeFragment : Fragment(R.layout.fragment_home), CustomOnclickListener {
 
     lateinit var mainViewModel: MainViewModel
 
-    @Inject
-    lateinit var songAdapter: SongAdapter
 
+    var songAdapter: SongAdapter = SongAdapter(this)
     private lateinit var homeBinding: FragmentHomeBinding
     private lateinit var layout: LinearLayoutManager
 
-
     private var isScrolling = false
+
+    private var curPlayingSong: Song? = null
+    private var curPlayingSongIndex: Int? = null
+    private var playbackState: PlaybackStateCompat? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         homeBinding = FragmentHomeBinding.inflate(layoutInflater, container, false)
         layout = LinearLayoutManager(requireContext())
@@ -47,19 +55,97 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
-
         setupRecyclerView()
         subscribeToObservers()
-        setUpRecycleViewScrollListener()
+        //setUpRecycleViewScrollListener()
+        observeSubscribedData()
+        miniPlayerToggleListener()
+        nextSongBtnListener()
+        prevSongBtnListener()
+        forwardSongBtnListener()
+        rewindSongBtnListener()
 
-        songAdapter.setOnItemClickListener {
-            mainViewModel.playOrToggleSong(it)
+
+    }
+
+    private fun miniPlayerToggleListener() {
+        homeBinding.miniPlayerPlayBtn.setOnClickListener {
+            curPlayingSong?.let {
+                mainViewModel.playOrToggleSong(it, true)
+            }
+        }
+
+    }
+
+    private fun nextSongBtnListener() {
+        homeBinding.miniPlayerNextBtn.setOnClickListener {
+            mainViewModel.skipToNextSong()
+        }
+    }
+
+    private fun prevSongBtnListener() {
+        homeBinding.miniPlayerPrevBtn.setOnClickListener {
+            mainViewModel.skipToPreviousSong()
+        }
+    }
+
+    private fun forwardSongBtnListener() {
+        homeBinding.miniPlayerForwardBtn.setOnClickListener {
+            mainViewModel.forwardSong()
+        }
+    }
+
+    private fun rewindSongBtnListener() {
+        homeBinding.miniPlayerRewindBtn.setOnClickListener {
+            mainViewModel.rewindSong()
+        }
+    }
+
+
+    private fun observeSubscribedData() {
+        mainViewModel.curPlayingSong.observe(viewLifecycleOwner) {
+            curPlayingSong = it?.ToSong()
+            curPlayingSong?.let { it1 ->
+                setMiniPLayerContent(it1, songAdapter.songs.indexOf(it1))
+                // Log.d("ggggggggg",songAdapter.songs.indexOf(it1).toString())
+            }
+        }
+        mainViewModel.playbackState.observe(viewLifecycleOwner) {
+            playbackState = it
+            homeBinding.miniPlayerPlayBtn.setImageResource(
+                if (playbackState?.isPlaying == true) R.drawable.pause_btn_icon else R.drawable.play_btn_icon
+            )
+        }
+
+        mainViewModel.isConnected.observe(viewLifecycleOwner) { event ->
+            event?.getContentIfNotHandled()?.let {
+                when (it.status) {
+                    Status.ERROR -> Snackbar.make(
+                        homeBinding.root,
+                        it.message ?: "An error occurred",
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                    else -> Unit
+                }
+            }
+        }
+        mainViewModel.networkError.observe(viewLifecycleOwner) { event ->
+            event?.getContentIfNotHandled()?.let {
+                when (it.status) {
+                    Status.ERROR -> Snackbar.make(
+                        homeBinding.root,
+                        it.message ?: "An error occurred",
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                    else -> Unit
+                }
+            }
         }
     }
 
     private fun setupRecyclerView() = homeBinding.listSongsPlaylist.apply {
-        setHasFixedSize(true)
-        setItemViewCacheSize(10)
+        // setHasFixedSize(true)
+        //setItemViewCacheSize(10)
         adapter = songAdapter
         layoutManager = layout
     }
@@ -81,10 +167,19 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 val currentItems = layout.childCount  // current visible items on the screen
                 val scrolledOutItems = layout.findFirstVisibleItemPosition() // scrolled out items
 
-                if (isScrolling && (currentItems + scrolledOutItems >= totalItems - 1)) {
+                if (isScrolling && (currentItems + scrolledOutItems >= totalItems)) {
                     isScrolling = false
-                    Log.d("isScrolling $isScrolling", "after Scrolled")
+                    val handler = Handler()
+                    handler.post {
+                        homeBinding.loadingProgressBar.isVisible = true
+                    }
+                    //   Log.d("isScrolling $isScrolling", "after Scrolled")
+                    // Log.d("isVisivle ", homeBinding.loadingProgressBar.isVisible.toString())
                     subscribeToObservers() //calling api again
+                    handler.postDelayed({
+                        homeBinding.loadingProgressBar.isVisible = false
+                        //  Log.d("Hnadler", homeBinding.loadingProgressBar.isVisible.toString())
+                    }, 600L)
                 }
 
             }
@@ -99,14 +194,66 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             when (result.status) {
                 Status.SUCCESS -> {
                     homeBinding.loadingProgressBar.isVisible = false
+
                     result.data?.let { songs ->
+                        if (curPlayingSong == null && songs.isNotEmpty()) {
+                            homeBinding.apply {
+                                miniPlayerCard.isVisible = true
+                                setMiniPLayerContent(songs[0], 0)
+                            }
+                            if (curPlayingSongIndex == 0) {
+                                homeBinding.miniPlayerPrevBtn.isEnabled = false
+                            }
+
+                        }
+                        homeBinding.listSongsPlaylist.post {
                             songAdapter.add(songs)
+                        }
                     }
                 }
                 Status.ERROR -> Unit
                 Status.LOADING -> homeBinding.loadingProgressBar.isVisible = true
             }
         }
+    }
+
+    override fun onItemClickChangeMiniPlayer(song: Song, index: Int) {
+        Log.d("jjjjjj$index", song.toString())
+        setMiniPLayerContent(song, index)
+        mainViewModel.playOrToggleSong(song)
+
+    }
+
+    fun MediaMetadataCompat.ToSong(): Song? {
+        return description?.let {
+            Song(
+                it.mediaId ?: "",
+                it.title.toString(),
+                it.subtitle.toString(),
+                it.mediaUri.toString(),
+                it.iconUri.toString()
+
+
+            )
+        }
+    }
+
+    private fun setMiniPLayerContent(song: Song, index: Int) {
+        homeBinding.apply {
+            miniPlayerSongName.text = song.title
+            miniPlayerCreatorName.text = "Anonymous" + song.subtitle
+
+            if (index == 0) {
+                miniPlayerPrevBtn.isEnabled = false
+                miniPlayerPrevBtn.setColorFilter(resources.getColor(R.color.white))
+            } else {
+
+                miniPlayerPrevBtn.isEnabled = true
+                miniPlayerPrevBtn.setColorFilter(resources.getColor(R.color.black))
+            }
+        }
+        curPlayingSong = song
+        curPlayingSongIndex = index
     }
 }
 

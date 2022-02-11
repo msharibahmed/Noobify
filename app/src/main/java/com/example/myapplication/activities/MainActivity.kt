@@ -14,7 +14,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var mainActivityBinding: ActivityMainBinding
     private lateinit var layout: LinearLayoutManager
     private lateinit var paginationLoadingProgressBar: ProgressBar
-  //  private var playlistAdapter: PlaylistAdapter = PlaylistAdapter(this@MainActivity, this)
+    //  private var playlistAdapter: PlaylistAdapter = PlaylistAdapter(this@MainActivity, this)
 
     var showMiniPlayerCheck: Boolean = false //using to not show miniPlayer during screen loading
 

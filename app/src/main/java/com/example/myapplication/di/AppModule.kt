@@ -32,4 +32,6 @@ object AppModule {
             .error(R.drawable.noobify_splash_screen_icon)
             .diskCacheStrategy(DiskCacheStrategy.DATA)
     )
+
+
 }

@@ -10,6 +10,8 @@ class MusicDatabase {
            val res =  destinationService.getSongDetail().shorts
             val songs = ArrayList<Song>()
             //Log.d("LOG gOT THE RESULTS ApI",res.toString())
+           // var uniqueId  = Calendar.getInstance().time.toString();
+           // Log.d(uniqueId.toString(),"current tome")
             res.forEach { it->
                 songs.add(Song(it.shortID,it.title,it.creator.userID,it.audioPath,"https://img.icons8.com/color/344/audio-wave--v1.png"))
             }

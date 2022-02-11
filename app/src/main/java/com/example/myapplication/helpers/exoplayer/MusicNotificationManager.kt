@@ -36,7 +36,7 @@ class MusicNotificationManager(
             .setNotificationListener(notificationListener)
             .build()
             .apply {
-                setSmallIcon(R.drawable.noobify_splash_screen_icon)
+                setSmallIcon(R.drawable.music_icon)
                 setMediaSessionToken(sessionToken)
             }
 
@@ -66,6 +66,7 @@ class MusicNotificationManager(
             player: Player,
             callback: PlayerNotificationManager.BitmapCallback
         ): Bitmap? {
+
             Glide.with(context).asBitmap()
                 .load(mediaController.metadata.description.iconUri)
                 .into(object : CustomTarget<Bitmap>() {
@@ -79,6 +80,8 @@ class MusicNotificationManager(
                     override fun onLoadCleared(placeholder: Drawable?) = Unit
                 })
             return null
+
+
         }
 
     }
