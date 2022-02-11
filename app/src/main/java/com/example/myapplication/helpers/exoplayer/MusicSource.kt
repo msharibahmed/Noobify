@@ -14,39 +14,42 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class MusicSource @Inject constructor(
+class MusicSource
+@Inject constructor(
     private val musicDatabase: MusicDatabase
 ) {
 
-    var songs = emptyList<MediaMetadataCompat>() //contains meta data of our songs
+    var songs = emptyList<MediaMetadataCompat>()
 
-    suspend fun fetchMediaData() = withContext(Dispatchers.IO) {
+    suspend fun fetchMediaData() {
         state = State.STATE_INITIALIZING
-        val allSongs = musicDatabase.getAllSongs() //calling our api to get all songs
-        songs = allSongs.map { song ->
+        getAllSongs()
+        state = State.STATE_INITIALIZED
+    }
 
-            //adding each songs metadata into our new list songs
+    suspend fun getAllSongs() = withContext(Dispatchers.IO) {
+        val allSongs = musicDatabase.getAllSongs()
+        songs = allSongs.map { song ->
             MediaMetadataCompat.Builder()
-                .putString(METADATA_KEY_ARTIST, "Anonymous" + song.creator.userID)
-                .putString(METADATA_KEY_MEDIA_ID, song.shortID)
+                .putString(METADATA_KEY_ARTIST, song.subtitle)
+                .putString(METADATA_KEY_MEDIA_ID, song.mediaId)
                 .putString(METADATA_KEY_TITLE, song.title)
-                .putString(METADATA_KEY_DISPLAY_SUBTITLE,song.title)
                 .putString(METADATA_KEY_DISPLAY_TITLE, song.title)
-                .putString(METADATA_KEY_MEDIA_URI, song.audioPath)
+                .putString(METADATA_KEY_DISPLAY_ICON_URI, song.imageUrl)
+                .putString(METADATA_KEY_MEDIA_URI, song.songUrl)
+                .putString(METADATA_KEY_ALBUM_ART_URI, song.imageUrl)
+                .putString(METADATA_KEY_DISPLAY_SUBTITLE, song.subtitle)
+                .putString(METADATA_KEY_DISPLAY_DESCRIPTION, song.subtitle)
                 .build()
         }
-        state = State.STATE_INITIALIZED
-
     }
 
     fun asMediaSource(dataSourceFactory: DefaultDataSourceFactory): ConcatenatingMediaSource {
-        //concatenating each media source so that next song plays automatically
         val concatenatingMediaSource = ConcatenatingMediaSource()
         songs.forEach { song ->
-
             val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
                 .createMediaSource(song.getString(METADATA_KEY_MEDIA_URI).toUri())
-            concatenatingMediaSource.addMediaSource(mediaSource) //appends media source to the list
+            concatenatingMediaSource.addMediaSource(mediaSource)
         }
         return concatenatingMediaSource
     }
@@ -65,26 +68,26 @@ class MusicSource @Inject constructor(
     private val onReadyListeners = mutableListOf<(Boolean) -> Unit>()
 
     private var state: State = State.STATE_CREATED
-        set(currentState) {
-            if (currentState == State.STATE_INITIALIZED || currentState == State.STATE_ERROR) {
+        set(value) {
+            if (value == State.STATE_INITIALIZED || value == State.STATE_ERROR) {
                 synchronized(onReadyListeners) {
-                    field = currentState
+                    field = value
                     onReadyListeners.forEach { listener ->
                         listener(state == State.STATE_INITIALIZED)
                     }
                 }
             } else {
-                field = currentState
+                field = value
             }
         }
 
     fun whenReady(action: (Boolean) -> Unit): Boolean {
-        return if (state == State.STATE_CREATED || state == State.STATE_INITIALIZING) {
+        if (state == State.STATE_CREATED || state == State.STATE_INITIALIZING) {
             onReadyListeners += action
-            false
+            return false
         } else {
             action(state == State.STATE_INITIALIZED)
-            true
+            return true
         }
     }
 }

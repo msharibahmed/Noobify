@@ -5,20 +5,27 @@ import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_MEDIA_ID
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.myapplication.helpers.Constants.MEDIA_ROOT_ID
 import com.example.myapplication.helpers.Resource
-import com.example.myapplication.helpers.exoplayer.*
-import com.example.myapplication.models.PlaylistItemModel
+import com.example.myapplication.helpers.exoplayer.MusicServiceConnection
+import com.example.myapplication.helpers.exoplayer.isPlayEnabled
+import com.example.myapplication.helpers.exoplayer.isPlaying
+import com.example.myapplication.helpers.exoplayer.isPrepared
+import com.example.myapplication.models.Song
+import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
-class MainViewModel @Inject constructor(
+@HiltViewModel
+class MainViewModel
+@Inject
+constructor(
     private val musicServiceConnection: MusicServiceConnection
 ) : ViewModel() {
 
+    private val _mediaItems = MutableLiveData<Resource<List<Song>>>()
+    val mediaItems: LiveData<Resource<List<Song>>> = _mediaItems
 
-    private val _mediaItems = MutableLiveData<Resource<List<PlaylistItemModel.Short>>>()
-    val mediaItems: LiveData<Resource<List<PlaylistItemModel.Short>>> = _mediaItems
-
-    val isConnection = musicServiceConnection.isConnected
+    val isConnected = musicServiceConnection.isConnected
     val networkError = musicServiceConnection.networkError
     val curPlayingSong = musicServiceConnection.curPlayingSong
     val playbackState = musicServiceConnection.playbackState
@@ -26,23 +33,20 @@ class MainViewModel @Inject constructor(
     init {
         _mediaItems.postValue(Resource.loading(null))
         musicServiceConnection.subscribe(
-            MEDIA_ROOT_ID, object : MediaBrowserCompat.SubscriptionCallback() {
+            MEDIA_ROOT_ID,
+            object : MediaBrowserCompat.SubscriptionCallback() {
                 override fun onChildrenLoaded(
                     parentId: String,
                     children: MutableList<MediaBrowserCompat.MediaItem>
                 ) {
                     super.onChildrenLoaded(parentId, children)
-
                     val items = children.map {
-                        PlaylistItemModel.Short(
-                            it.description.mediaUri.toString(),
-                            PlaylistItemModel.Short.Creator(
-                                it.description.subtitle.toString(),
-                                it.description.subtitle.toString()
-                            ),
-                            "",
+                        Song(
                             it.mediaId!!,
-                            it.description.title.toString()
+                            it.description.title.toString(),
+                            it.description.subtitle.toString(),
+                            it.description.mediaUri.toString(),
+                            it.description.iconUri.toString()
                         )
                     }
                     _mediaItems.postValue(Resource.success(items))
@@ -62,40 +66,25 @@ class MainViewModel @Inject constructor(
         musicServiceConnection.transportControls.seekTo(pos)
     }
 
-    fun fastForward() {
-        musicServiceConnection.transportControls.fastForward()
-    }
-
-    fun rewind() {
-        musicServiceConnection.transportControls.rewind()
-    }
-
-    fun seekTo(speed: Float) {
-        musicServiceConnection.transportControls.setPlaybackSpeed(speed)
-    }
-
-
-    fun playOrToggleSong(mediaItem: PlaylistItemModel.Short, toggle: Boolean = false) {
+    fun playOrToggleSong(mediaItem: Song, toggle: Boolean = false) {
         val isPrepared = playbackState.value?.isPrepared ?: false
-        if(isPrepared && mediaItem.shortID ==
-            curPlayingSong.value?.getString(METADATA_KEY_MEDIA_ID)) {
+        if (isPrepared && mediaItem.mediaId == curPlayingSong.value?.getString(METADATA_KEY_MEDIA_ID)) {
             playbackState.value?.let { playbackState ->
                 when {
-                    playbackState.isPlaying -> if(toggle) musicServiceConnection.transportControls.pause()
+                    playbackState.isPlaying -> if (toggle) musicServiceConnection.transportControls.pause()
                     playbackState.isPlayEnabled -> musicServiceConnection.transportControls.play()
                     else -> Unit
                 }
             }
         } else {
-            musicServiceConnection.transportControls.playFromMediaId(mediaItem.shortID, null)
+            musicServiceConnection.transportControls.playFromMediaId(mediaItem.mediaId, null)
         }
     }
 
     override fun onCleared() {
         super.onCleared()
-        musicServiceConnection.unsubscribe(MEDIA_ROOT_ID,
+        musicServiceConnection.unsubscribe(
+            MEDIA_ROOT_ID,
             object : MediaBrowserCompat.SubscriptionCallback() {})
     }
-
-
 }

@@ -11,4 +11,6 @@
     <string name="play_btn">Play Button</string>
     <string name="playlist_added_text">Added to Playlist</string>
     <string name="created_at">39 minutes ago</string>
+    <string name="notification_channel_name">Music Channel</string>
+    <string name="notification_channel_description">Shows the currently playing music</string>
 </resources>

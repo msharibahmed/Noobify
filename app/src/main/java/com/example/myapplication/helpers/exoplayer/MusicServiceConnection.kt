@@ -15,7 +15,9 @@ import com.example.myapplication.helpers.Resource
 const val NETWORK_ERROR = "NETWORK_ERROR"
 
 //communicator between our activity and service
-class MusicServiceConnection(context: Context) {
+class MusicServiceConnection(
+    context: Context
+) {
 
     private val _isConnected = MutableLiveData<Event<Resource<Boolean>>>()
     val isConnected: LiveData<Event<Resource<Boolean>>> = _isConnected
@@ -102,7 +104,7 @@ class MusicServiceConnection(context: Context) {
                 NETWORK_ERROR -> _networkError.postValue(
                     Event(
                         Resource.error(
-                            "Couldn't connect to the server. Please check your internet connection.",
+                            "Couldn't connect to the network. Check your internet connection",
                             null
                         )
                     )
@@ -115,7 +117,3 @@ class MusicServiceConnection(context: Context) {
         }
     }
 }
-
-
-
-

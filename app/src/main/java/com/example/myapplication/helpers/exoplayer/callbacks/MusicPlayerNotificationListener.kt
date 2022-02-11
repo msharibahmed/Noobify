@@ -3,8 +3,8 @@ package com.example.myapplication.helpers.exoplayer.callbacks
 import android.app.Notification
 import android.content.Intent
 import androidx.core.content.ContextCompat
+import com.example.myapplication.helpers.Constants.NOTIFICATION_ID
 import com.example.myapplication.helpers.exoplayer.MusicService
-import com.example.myapplication.helpers.exoplayer.NOTIFICATION_ID
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
 
 class MusicPlayerNotificationListener(
@@ -13,6 +13,7 @@ class MusicPlayerNotificationListener(
 
     override fun onNotificationCancelled(notificationId: Int, dismissedByUser: Boolean) {
         super.onNotificationCancelled(notificationId, dismissedByUser)
+
         musicService.apply {
             stopForeground(true)
             isForegroundService = false

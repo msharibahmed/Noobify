@@ -1,39 +1,23 @@
 package com.example.myapplication.services
 
-import android.util.Log
-import com.example.myapplication.models.PlaylistItemModel
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.example.myapplication.models.Song
 
 class MusicDatabase {
+    private val destinationService = ServiceBuilder.buildService(PlaylistItemService::class.java)
+    suspend fun getAllSongs(): List<Song> {
+        return try {
 
-    fun getAllSongs(): List<PlaylistItemModel.Short> {
-        var playlistItemList: List<PlaylistItemModel.Short> = emptyList()
-        //initiate the service
-        val destinationService = ServiceBuilder.buildService(PlaylistItemService::class.java)
-        val requestCall = destinationService.getSongDetail()
-
-        //make network call asynchronously
-        requestCall.enqueue(object : Callback<PlaylistItemModel> {
-            override fun onResponse(
-                call: Call<PlaylistItemModel>,
-                response: Response<PlaylistItemModel>
-            ) {
-
-                Log.d("Response", "onResponse: ${response.body()}")
-                playlistItemList = if (response.isSuccessful) {
-                    response.body()!!.shorts
-                } else {
-                    emptyList()
-                }
+           val res =  destinationService.getSongDetail().shorts
+            val songs = ArrayList<Song>()
+            //Log.d("LOG gOT THE RESULTS ApI",res.toString())
+            res.forEach { it->
+                songs.add(Song(it.shortID,it.title,it.creator.userID,it.audioPath,"https://img.icons8.com/color/344/audio-wave--v1.png"))
             }
 
-            override fun onFailure(call: Call<PlaylistItemModel>, t: Throwable) {
-                playlistItemList = emptyList()
-            }
-        })
-        return playlistItemList
+            songs.toList()
+        } catch (e: Exception) {
+            emptyList()
+        }
+
     }
-
 }
