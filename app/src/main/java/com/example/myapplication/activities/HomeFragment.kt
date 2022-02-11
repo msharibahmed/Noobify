@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.databinding.FragmentHomeBinding
 import com.example.myapplication.helpers.Constants.TAG
@@ -17,82 +18,6 @@ import com.example.myapplication.helpers.Status
 import com.example.myapplication.ui.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-
-/*
-@AndroidEntryPoint
-class HomeFragment : Fragment(R.layout.fragment_home), CustomItemClickListener {
-
-    private lateinit var mainViewModel: MainViewModel
-
-
-    private lateinit var playlistAdapter: PlaylistAdapter
-    private lateinit var homeBinding: FragmentHomeBinding
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        super.onCreateView(inflater, container, savedInstanceState)
-        homeBinding = FragmentHomeBinding.inflate(layoutInflater, container, false)
-
-        return homeBinding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
-
-        super.onViewCreated(view, savedInstanceState)
-        playlistAdapter = PlaylistAdapter(requireContext(), this)
-        mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
-        setupRecyclerView()
-        subscribeToObservers()
-
-
-    }
-
-    private fun setupRecyclerView() = homeBinding.listSongsPlaylist.apply {
-        setHasFixedSize(true)
-        setItemViewCacheSize(10)
-        layoutManager = LinearLayoutManager(requireContext())
-        adapter = playlistAdapter
-    }
-
-    private fun subscribeToObservers() {
-        mainViewModel.mediaItems.observe(viewLifecycleOwner) { result ->
-            Log.d("LOG:", homeBinding.loadingProgressBar.isVisible.toString())
-
-            when (result.status) {
-
-                Status.SUCCESS -> {
-                    homeBinding.loadingProgressBar.isVisible = false
-                    Log.d("LOG:", homeBinding.loadingProgressBar.isVisible.toString())
-
-
-                    result.data?.let { songs ->
-                        playlistAdapter.add(songs)
-                        Log.d("LOG:size", songs.toString())
-
-                    }
-                }
-                Status.ERROR -> Unit
-                Status.LOADING -> homeBinding.loadingProgressBar.isVisible = true
-            }
-        }
-    }
-
-    override fun onItemClickChangeMiniPlayer(
-        playlistItemModel: PlaylistItemModel.Short,
-        index: Int
-    ) {
-        android.util.Log.d("play", "go3")
-
-        mainViewModel.playOrToggleSong(playlistItemModel)
-        android.util.Log.d("play", "go4")
-
-    }
-}
-*/
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(R.layout.fragment_home) {
@@ -103,6 +28,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     lateinit var songAdapter: SongAdapter
 
     private lateinit var homeBinding: FragmentHomeBinding
+    private lateinit var layout: LinearLayoutManager
+
+
+    private var isScrolling = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -111,6 +40,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         homeBinding = FragmentHomeBinding.inflate(layoutInflater, container, false)
+        layout = LinearLayoutManager(requireContext())
         return homeBinding.root
     }
 
@@ -120,17 +50,48 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         setupRecyclerView()
         subscribeToObservers()
+        setUpRecycleViewScrollListener()
 
         songAdapter.setOnItemClickListener {
-            Log.d("kk","kk")
             mainViewModel.playOrToggleSong(it)
         }
     }
 
     private fun setupRecyclerView() = homeBinding.listSongsPlaylist.apply {
+        setHasFixedSize(true)
+        setItemViewCacheSize(10)
         adapter = songAdapter
-        layoutManager = LinearLayoutManager(requireContext())
+        layoutManager = layout
     }
+
+    private fun setUpRecycleViewScrollListener() {
+        // using scroll listener to notify when list is finished and call api
+        homeBinding.listSongsPlaylist.addOnScrollListener(object :
+            RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                isScrolling = true
+                Log.d("isScrolling $isScrolling", "during scrolling")
+            }
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                val totalItems = songAdapter.itemCount//total items in the list
+                val currentItems = layout.childCount  // current visible items on the screen
+                val scrolledOutItems = layout.findFirstVisibleItemPosition() // scrolled out items
+
+                if (isScrolling && (currentItems + scrolledOutItems >= totalItems - 1)) {
+                    isScrolling = false
+                    Log.d("isScrolling $isScrolling", "after Scrolled")
+                    subscribeToObservers() //calling api again
+                }
+
+            }
+        })
+
+    }
+
 
     private fun subscribeToObservers() {
         mainViewModel.mediaItems.observe(viewLifecycleOwner) { result ->
@@ -139,7 +100,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 Status.SUCCESS -> {
                     homeBinding.loadingProgressBar.isVisible = false
                     result.data?.let { songs ->
-                        songAdapter.add(songs)
+                            songAdapter.add(songs)
                     }
                 }
                 Status.ERROR -> Unit

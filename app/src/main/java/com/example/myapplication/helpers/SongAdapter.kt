@@ -10,7 +10,7 @@ import com.example.myapplication.databinding.PlaylistItemBinding
 import com.example.myapplication.models.Song
 import javax.inject.Inject
 
-class SongAdapter
+open class SongAdapter
 @Inject
 constructor(
     private val glide: RequestManager
@@ -23,13 +23,16 @@ constructor(
         var songName = binding.textSongName
 
     }
+
     val songs = ArrayList<Song>()
 
     @SuppressLint("NotifyDataSetChanged")
     fun add(items: List<Song>) {
         songs.addAll(items)
         notifyDataSetChanged()
+
     }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongViewHolder {
         return SongViewHolder(
             PlaylistItemBinding.inflate(
@@ -49,10 +52,10 @@ constructor(
             //createdAt.text = dateFormatter(song.dateCreated)
             songName.text = song.title
 
-                itemView.setOnClickListener {
+            itemView.setOnClickListener {
                 onItemClickListener?.let { click ->
                     click(song)
-                    Log.d("kl",song.toString())
+                    Log.d("kl", song.toString())
                 }
             }
         }
