@@ -25,7 +25,7 @@
             android:layout_marginHorizontal="10dp"
             android:layout_marginBottom="10dp"
             android:elevation="80dp"
-            android:visibility="visible"
+            android:visibility="gone"
             app:cardCornerRadius="10dp">
 
             <LinearLayout
@@ -131,23 +131,14 @@
                         android:layout_weight="1"
                         android:gravity="center"
                         android:orientation="vertical">
-l
+
                         <ImageView
                             android:id="@+id/mini_player_play_btn"
                             android:layout_width="70dp"
                             android:layout_height="70dp"
                             android:src="@drawable/play_btn_icon"
-                            android:visibility="visible"
                             tools:ignore="ImageContrastCheck" />
 
-                        <ProgressBar
-                            android:id="@+id/audioLoadingProgress"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_centerInParent="true"
-                            android:layout_marginEnd="15dp"
-                            android:indeterminateTint="@color/noobify_icon_background"
-                            android:visibility="gone" />
                     </RelativeLayout>
 
 
