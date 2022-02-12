@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -24,6 +25,8 @@ import com.example.myapplication.models.Song
 import com.example.myapplication.ui.viewmodel.MainViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import java.text.SimpleDateFormat
+import java.util.*
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(R.layout.fragment_home), CustomOnclickListener {
@@ -40,6 +43,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), CustomOnclickListener {
     private var curPlayingSong: Song? = null
     private var curPlayingSongIndex: Int? = null
     private var playbackState: PlaybackStateCompat? = null
+    private var shouldUpdateSeekbar = true
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -59,11 +63,17 @@ class HomeFragment : Fragment(R.layout.fragment_home), CustomOnclickListener {
         subscribeToObservers()
         setUpRecycleViewScrollListener()
         observeSubscribedData()
+        setMiniPLayerViewListeners()
+
+    }
+
+    private fun setMiniPLayerViewListeners() {
         miniPlayerToggleListener()
         nextSongBtnListener()
         prevSongBtnListener()
         forwardSongBtnListener()
         rewindSongBtnListener()
+        seekbarBtnListener()
 
     }
 
@@ -100,6 +110,31 @@ class HomeFragment : Fragment(R.layout.fragment_home), CustomOnclickListener {
         }
     }
 
+    private fun seekbarBtnListener() {
+        homeBinding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) {
+                    setCurPlayerTimeToTextView(progress.toLong())
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                shouldUpdateSeekbar = false
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                seekBar?.let {
+                    mainViewModel.seekTo(it.progress.toLong())
+                    shouldUpdateSeekbar = true
+                }
+            }
+        })
+    }
+
+    private fun setCurPlayerTimeToTextView(ms: Long) {
+        val dateFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
+        homeBinding.tvCurTime.text = dateFormat.format(ms - 1800000L)
+    }
 
     private fun observeSubscribedData() {
         mainViewModel.curPlayingSong.observe(viewLifecycleOwner) {
@@ -114,6 +149,22 @@ class HomeFragment : Fragment(R.layout.fragment_home), CustomOnclickListener {
             homeBinding.miniPlayerPlayBtn.setImageResource(
                 if (playbackState?.isPlaying == true) R.drawable.pause_btn_icon else R.drawable.play_btn_icon
             )
+            homeBinding.seekBar.progress = it?.position?.toInt() ?: 0
+        }
+
+        mainViewModel.curPlayerPosition.observe(viewLifecycleOwner) {
+            if (shouldUpdateSeekbar) {
+                homeBinding.seekBar.progress = it.toInt()
+                setCurPlayerTimeToTextView(it)
+            }
+        }
+        mainViewModel.curSongDuration.observe(viewLifecycleOwner) {
+            if (it != 9223372036852975809) {
+                homeBinding.seekBar.max = it.toInt()
+            }
+            //  Log.d("currentSongLength + 30 Min->","$it")
+            val dateFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
+            homeBinding.tvSongDuration.text = dateFormat.format(it - 1800000L)
         }
 
         mainViewModel.isConnected.observe(viewLifecycleOwner) { event ->
@@ -143,8 +194,6 @@ class HomeFragment : Fragment(R.layout.fragment_home), CustomOnclickListener {
     }
 
     private fun setupRecyclerView() = homeBinding.listSongsPlaylist.apply {
-        // setHasFixedSize(true)
-        //setItemViewCacheSize(10)
         adapter = songAdapter
         layoutManager = layout
     }
@@ -156,7 +205,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), CustomOnclickListener {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 isScrolling = true
-                Log.d("isScrolling $isScrolling", "during scrolling")
+                // Log.d("isScrolling $isScrolling", "during scrolling")
             }
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -217,7 +266,6 @@ class HomeFragment : Fragment(R.layout.fragment_home), CustomOnclickListener {
     }
 
     override fun onItemClickChangeMiniPlayer(song: Song, index: Int) {
-        Log.d("jjjjjj$index", song.toString())
         setMiniPLayerContent(song, index)
         mainViewModel.playOrToggleSong(song)
 
@@ -231,8 +279,6 @@ class HomeFragment : Fragment(R.layout.fragment_home), CustomOnclickListener {
                 it.subtitle.toString(),
                 it.mediaUri.toString(),
                 it.iconUri.toString()
-
-
             )
         }
     }
