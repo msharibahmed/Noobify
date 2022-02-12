@@ -92,12 +92,46 @@
 
                 </LinearLayout>
 
-                <View
+                <!--   <View
+                       android:layout_width="match_parent"
+                       android:layout_height="1dp"
+                       android:layout_marginHorizontal="16dp"
+                       android:layout_marginVertical="2dp"
+                       android:background="@color/grey" />-->
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginHorizontal="16dp"
-                    android:layout_marginVertical="2dp"
-                    android:background="@color/grey" />
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/tvCurTime"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:textColor="@color/black"
+                        android:gravity="center"
+                        android:text="00:00"
+                        android:textSize="14sp" />
+
+                    <SeekBar
+                        android:id="@+id/seekBar"
+                        android:layout_width="0dp"
+                        android:layout_height="18dp"
+                        android:layout_weight="1"
+                        android:progressTint="@color/black"
+                        android:thumbTint="@color/black" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/tvSongDuration"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:gravity="center"
+                        android:text="00:00"
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
