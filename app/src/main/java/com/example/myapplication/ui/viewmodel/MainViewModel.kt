@@ -2,7 +2,6 @@ package com.example.myapplication.ui.viewmodel
 
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_MEDIA_ID
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -62,6 +61,7 @@ constructor(
     fun skipToPreviousSong() {
         musicServiceConnection.transportControls.skipToPrevious()
     }
+
     fun forwardSong() {
         musicServiceConnection.transportControls.fastForward()
     }
@@ -76,10 +76,10 @@ constructor(
 
     fun playOrToggleSong(mediaItem: Song, toggle: Boolean = false) {
         val isPrepared = playbackState.value?.isPrepared ?: false
-        Log.d(
-            "TOGGLE",
-            "(${mediaItem.mediaId}  ${curPlayingSong.value?.getString(METADATA_KEY_MEDIA_ID)}"
-        )
+        /* Log.d(
+             "TOGGLE",
+             "(${mediaItem.mediaId}  ${curPlayingSong.value?.getString(METADATA_KEY_MEDIA_ID)}"
+         )*/
         if (isPrepared && mediaItem.mediaId == curPlayingSong.value?.getString(METADATA_KEY_MEDIA_ID)) {
             playbackState.value?.let { playbackState ->
                 when {

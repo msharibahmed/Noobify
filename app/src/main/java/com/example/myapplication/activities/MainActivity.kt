@@ -2,8 +2,10 @@ package com.example.myapplication.activities
 
 import android.media.MediaPlayer
 import android.os.Bundle
+import android.view.Window
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.R
 import com.example.myapplication.databinding.ActivityMainBinding
@@ -33,6 +35,8 @@ class MainActivity : AppCompatActivity() {
         setTheme(R.style.Theme_MyApplication)
         mainActivityBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mainActivityBinding.root)
+        val window :Window = this@MainActivity.window
+        window.statusBarColor= ContextCompat.getColor(this,R.color.teal_700)
     }
 /*
     override fun onItemClickChangeMiniPlayer(

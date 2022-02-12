@@ -57,14 +57,13 @@ class HomeFragment : Fragment(R.layout.fragment_home), CustomOnclickListener {
         mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
         setupRecyclerView()
         subscribeToObservers()
-        //setUpRecycleViewScrollListener()
+        setUpRecycleViewScrollListener()
         observeSubscribedData()
         miniPlayerToggleListener()
         nextSongBtnListener()
         prevSongBtnListener()
         forwardSongBtnListener()
         rewindSongBtnListener()
-
 
     }
 
