@@ -12,6 +12,7 @@ import com.example.myapplication.helpers.Constants.MEDIA_ROOT_ID
 import com.example.myapplication.helpers.exoplayer.callbacks.MusicPlaybackPreparer
 import com.example.myapplication.helpers.exoplayer.callbacks.MusicPlayerEventListener
 import com.example.myapplication.helpers.exoplayer.callbacks.MusicPlayerNotificationListener
+import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
@@ -79,7 +80,10 @@ class MusicService : MediaBrowserServiceCompat() {
             MusicPlayerNotificationListener(this)
         ) {
             // newSongCallback
-            curSongDuration = exoPlayer.duration
+            if (exoPlayer.duration != C.TIME_UNSET) {
+                curSongDuration = exoPlayer.duration
+            }
+
         }
 
         val musicPlaybackPreparer = MusicPlaybackPreparer(musicSource) {

@@ -5,14 +5,15 @@ import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_MEDIA_ID
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.myapplication.helpers.Constants.MEDIA_ROOT_ID
+import com.example.myapplication.helpers.Constants.UPDATE_PLAYER_POSITION_INTERVAL
 import com.example.myapplication.helpers.Resource
-import com.example.myapplication.helpers.exoplayer.MusicServiceConnection
-import com.example.myapplication.helpers.exoplayer.isPlayEnabled
-import com.example.myapplication.helpers.exoplayer.isPlaying
-import com.example.myapplication.helpers.exoplayer.isPrepared
+import com.example.myapplication.helpers.exoplayer.*
 import com.example.myapplication.models.Song
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,6 +30,12 @@ constructor(
     val networkError = musicServiceConnection.networkError
     val curPlayingSong = musicServiceConnection.curPlayingSong
     val playbackState = musicServiceConnection.playbackState
+
+    private val _curSongDuration = MutableLiveData<Long>()
+    val curSongDuration: LiveData<Long> = _curSongDuration
+
+    private val _curPlayerPosition = MutableLiveData<Long>()
+    val curPlayerPosition: LiveData<Long> = _curPlayerPosition
 
     init {
         _mediaItems.postValue(Resource.loading(null))
@@ -52,6 +59,20 @@ constructor(
                     _mediaItems.postValue(Resource.success(items))
                 }
             })
+        updateCurrentPlayerPosition()
+    }
+
+    private fun updateCurrentPlayerPosition() {
+        viewModelScope.launch {
+            while (true) {
+                val pos = playbackState.value?.currentPlaybackPosition
+                if (curPlayerPosition.value != pos) {
+                    _curPlayerPosition.postValue(pos!!)
+                    _curSongDuration.postValue(MusicService.curSongDuration)
+                }
+                delay(UPDATE_PLAYER_POSITION_INTERVAL)
+            }
+        }
     }
 
     fun skipToNextSong() {
