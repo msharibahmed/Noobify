@@ -15,7 +15,6 @@ open class SongAdapter(private val listener: CustomOnclickListener) :
         RecyclerView.ViewHolder(binding.root), View.OnClickListener {
         var name = binding.textCreatorName
         var username = binding.textCreatorUsername
-        var createdAt = binding.textCreatedAt
         var songName = binding.textSongName
 
         init {
@@ -53,7 +52,6 @@ open class SongAdapter(private val listener: CustomOnclickListener) :
         holder.apply {
             name.text = "Anonymous" + song.subtitle
             username.text = "@anonymous" + song.subtitle
-            //createdAt.text = dateFormatter(song.dateCreated)
             songName.text = song.title
         }
 
