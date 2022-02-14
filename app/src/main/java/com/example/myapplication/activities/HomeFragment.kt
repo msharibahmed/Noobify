@@ -138,10 +138,9 @@ class HomeFragment : Fragment(R.layout.fragment_home), CustomOnclickListener {
 
     private fun observeSubscribedData() {
         mainViewModel.curPlayingSong.observe(viewLifecycleOwner) {
-            curPlayingSong = it?.ToSong()
+            curPlayingSong = it?.toSong()
             curPlayingSong?.let { it1 ->
                 setMiniPLayerContent(it1, songAdapter.songs.indexOf(it1))
-                // Log.d("ggggggggg",songAdapter.songs.indexOf(it1).toString())
             }
         }
         mainViewModel.playbackState.observe(viewLifecycleOwner) {
@@ -222,11 +221,11 @@ class HomeFragment : Fragment(R.layout.fragment_home), CustomOnclickListener {
                         homeBinding.loadingProgressBar.isVisible = true
                     }
                     //   Log.d("isScrolling $isScrolling", "after Scrolled")
-                    // Log.d("isVisivle ", homeBinding.loadingProgressBar.isVisible.toString())
+                    // Log.d("isVisible ", homeBinding.loadingProgressBar.isVisible.toString())
                     subscribeToObservers() //calling api again
                     handler.postDelayed({
                         homeBinding.loadingProgressBar.isVisible = false
-                        //  Log.d("Hnadler", homeBinding.loadingProgressBar.isVisible.toString())
+                        //  Log.d("Handler", homeBinding.loadingProgressBar.isVisible.toString())
                     }, 600L)
                 }
 
@@ -271,7 +270,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), CustomOnclickListener {
 
     }
 
-    fun MediaMetadataCompat.ToSong(): Song? {
+    private fun MediaMetadataCompat.toSong(): Song? {
         return description?.let {
             Song(
                 it.mediaId ?: "",
@@ -286,7 +285,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), CustomOnclickListener {
     private fun setMiniPLayerContent(song: Song, index: Int) {
         homeBinding.apply {
             miniPlayerSongName.text = song.title
-            miniPlayerCreatorName.text = "Anonymous" + song.subtitle
+            miniPlayerCreatorName.text = "Anonymous${song.subtitle}"
 
             if (index == 0) {
                 miniPlayerPrevBtn.isEnabled = false
