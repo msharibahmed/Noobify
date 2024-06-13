@@ -1,4 +1,4 @@
-            - name: Qodana Scan
+  - name: Qodana Scan
   # You may pin to the exact commit or the version.
   # uses: JetBrains/qodana-action@469f04d27c0073911e4f521e6d7ee37de73a84ff
   uses: JetBrains/qodana-action@v2024.1.3
