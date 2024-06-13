@@ -1,0 +1,47 @@
+name: Android CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    - name: Build with Gradle
+      run: ./gradlew build
+
+- name: Quality Monitor
+  # You may pin to the exact commit or the version.
+  # uses: uhafner/quality-monitor@e4dea63ae4309849c5c2c4a4d8de45383941109e
+  uses: uhafner/quality-monitor@v1.9.0
+  with:
+    # Quality monitor configuration (if not set the default configuration will be used)
+    config: # optional
+    # Name of the GitHub checks (if not set the default name will be used)
+    checks-name: # optional
+    # Pull request number (if not set, PR comments will be skipped)
+    pr-number: # optional
+    # GitHub authentication token (GITHUB_TOKEN)
+    github-token: 
+    # Skip the creation of annotations (for warnings and missed coverage) if not empty
+    skip-annotations: # optional
+    # Limit the number of warning annotations at specific lines. By default, all annotations are created.
+    max-warning-annotations: # optional
+    # Limit the number of coverage annotations at specific lines. By default, all annotations are created.
+    max-coverage-annotations: # optional
+          
