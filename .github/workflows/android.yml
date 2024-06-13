@@ -11,12 +11,14 @@ jobs:
       - name: Qodana Scan
         uses: JetBrains/qodana-action@v2024.1.3
         with:
+          # Path to the directory to be analyzed
+          path: . # specify the path to your codebase
           # Additional Qodana CLI arguments. Separate multiple arguments with commas (`,`).
           args: # optional, default is
           # Directory to store the analysis results
-          results-dir: # optional, default is ${{ runner.temp }}/qodana/results
+          results-dir: ${{ runner.temp }}/qodana/results # optional, default is ${{ runner.temp }}/qodana/results
           # Directory to store Qodana caches
-          cache-dir: # optional, default is ${{ runner.temp }}/qodana/caches
+          cache-dir: ${{ runner.temp }}/qodana/caches # optional, default is ${{ runner.temp }}/qodana/caches
           # Automatically restore and save Qodana caches using GitHub caches
           use-caches: true # optional, default is true
           # Set the primary cache key
