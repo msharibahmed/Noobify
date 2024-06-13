@@ -1,38 +1,45 @@
-  - name: Qodana Scan
-  # You may pin to the exact commit or the version.
-  # uses: JetBrains/qodana-action@469f04d27c0073911e4f521e6d7ee37de73a84ff
-  uses: JetBrains/qodana-action@v2024.1.3
-  with:
-    # Additional Qodana CLI arguments. Separate multiple arguments with commas (`,`).
-    args: # optional, default is 
-    # Directory to store the analysis results
-    results-dir: # optional, default is ${{ runner.temp }}/qodana/results
-    # Directory to store Qodana caches
-    cache-dir: # optional, default is ${{ runner.temp }}/qodana/caches
-    # Automatically restore and save Qodana caches using GitHub caches
-    use-caches: # optional, default is true
-    # Set the primary cache key
-    primary-cache-key: # optional, default is qodana-2024.1-${{ github.ref }}-${{ github.sha }}
-    # Set the additional cache key
-    additional-cache-key: # optional, default is qodana-2024.1-${{ github.ref }}
-    # Upload cache for the default branch only
-    cache-default-branch-only: # optional, default is false
-    # Upload Qodana results (SARIF, other artifacts, logs) as an artifact to the job
-    upload-result: # optional, default is false
-    # Specify Qodana results artifact name, used for results uploading
-    artifact-name: # optional, default is qodana-report
-    # Use annotations to mark the results in the GitHub user interface
-    use-annotations: # optional, default is true
-    # Analyze ONLY changed files in a pull request
-    pr-mode: # optional, default is true
-    # Post a comment with the Qodana results summary to the pull request
-    post-pr-comment: # optional, default is true
-    # GitHub token to access the repository: post annotations, comments
-    github-token: # optional, default is ${{ github.token }}
-    # Push Qodana fixes to the repository, can be none, branch to the current branch, or a pull request
-    push-fixes: # optional, default is none
-    # Commit message for the commit with quick-fixes. Not used if `push-fixes` is set to `none`
-    commit-message: # optional, default is 🤖 Apply quick-fixes by Qodana
-    # Use unstable Qodana CLI nightly
-    use-nightly: # optional, default is false
-          
+name: Qodana Scan
+on: [push, pull_request] # Assuming you want this workflow to run on push and pull requests
+
+jobs:
+  qodana:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
+      - name: Qodana Scan
+        uses: JetBrains/qodana-action@v2024.1.3
+        with:
+          # Additional Qodana CLI arguments. Separate multiple arguments with commas (`,`).
+          args: # optional, default is
+          # Directory to store the analysis results
+          results-dir: # optional, default is ${{ runner.temp }}/qodana/results
+          # Directory to store Qodana caches
+          cache-dir: # optional, default is ${{ runner.temp }}/qodana/caches
+          # Automatically restore and save Qodana caches using GitHub caches
+          use-caches: # optional, default is true
+          # Set the primary cache key
+          primary-cache-key: # optional, default is qodana-2024.1-${{ github.ref }}-${{ github.sha }}
+          # Set the additional cache key
+          additional-cache-key: # optional, default is qodana-2024.1-${{ github.ref }}
+          # Upload cache for the default branch only
+          cache-default-branch-only: # optional, default is false
+          # Upload Qodana results (SARIF, other artifacts, logs) as an artifact to the job
+          upload-result: # optional, default is false
+          # Specify Qodana results artifact name, used for results uploading
+          artifact-name: # optional, default is qodana-report
+          # Use annotations to mark the results in the GitHub user interface
+          use-annotations: # optional, default is true
+          # Analyze ONLY changed files in a pull request
+          pr-mode: # optional, default is true
+          # Post a comment with the Qodana results summary to the pull request
+          post-pr-comment: # optional, default is true
+          # GitHub token to access the repository: post annotations, comments
+          github-token: # optional, default is ${{ github.token }}
+          # Push Qodana fixes to the repository, can be none, branch to the current branch, or a pull request
+          push-fixes: # optional, default is none
+          # Commit message for the commit with quick-fixes. Not used if `push-fixes` is set to `none`
+          commit-message: # optional, default is 🤖 Apply quick-fixes by Qodana
+          # Use unstable Qodana CLI nightly
+          use-nightly: # optional, default is false
